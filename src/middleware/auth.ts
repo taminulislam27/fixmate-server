@@ -12,7 +12,6 @@ export interface AuthUser {
 }
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: AuthUser;
@@ -20,14 +19,12 @@ declare global {
   }
 }
 
-/** Wraps async handlers so rejected promises reach the error handler. */
 export const wrap =
   (fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>): RequestHandler =>
   (req, res, next) => {
     fn(req, res, next).catch(next);
   };
 
-/** 401 when the token is missing/invalid. The role is always re-read from the database. */
 export const verifyToken: RequestHandler = wrap(async (req, res, next) => {
   const header = req.headers.authorization || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : "";
