@@ -18,7 +18,7 @@ const allowed = (process.env.CLIENT_URL || "http://localhost:3000")
 app.use(
   cors({
     origin: (origin, cb) => {
-      // no Origin header = server-to-server / curl / Stripe
+
       if (!origin || allowed.includes(origin)) return cb(null, true);
       cb(new Error("Not allowed by CORS"));
     },
@@ -28,7 +28,7 @@ app.use(
   })
 );
 
-// Stripe webhook needs the raw body, so it is mounted before express.json()
+
 app.use("/api/payments/webhook", webhookRouter);
 app.use(express.json());
 
@@ -44,7 +44,7 @@ app.use("/api/stats", statsRoutes);
 
 app.use((_req, res) => res.status(404).json({ message: "Route not found" }));
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   res.status(500).json({ message: err.message || "Internal server error" });
