@@ -4,7 +4,6 @@ import { verifyCustomer, verifyTechnician, verifyToken, wrap } from "../middlewa
 
 const router = Router();
 
-/** Job status pipeline: current status -> allowed next statuses (technician side). */
 const TECH_TRANSITIONS: Record<string, string[]> = {
   requested: ["accepted", "rejected"],
   accepted: ["in-progress"],
@@ -12,7 +11,7 @@ const TECH_TRANSITIONS: Record<string, string[]> = {
 };
 const ACTIVE = ["requested", "accepted", "in-progress"];
 
-/** POST /api/bookings - customer sends a repair request. */
+
 router.post(
   "/",
   verifyToken,
@@ -77,7 +76,7 @@ router.post(
   })
 );
 
-/** GET /api/bookings/my - the logged-in customer's own bookings only. */
+
 router.get(
   "/my",
   verifyToken,
@@ -92,7 +91,7 @@ router.get(
   })
 );
 
-/** GET /api/bookings/technician - jobs for the logged-in technician only. */
+
 router.get(
   "/technician",
   verifyToken,
@@ -106,7 +105,7 @@ router.get(
   })
 );
 
-/** PATCH /api/bookings/:id/cancel - customer cancels while still "requested". */
+
 router.patch(
   "/:id/cancel",
   verifyToken,
@@ -135,7 +134,7 @@ router.patch(
   })
 );
 
-/** PATCH /api/bookings/:id/status - technician moves the job forward (server-enforced pipeline). */
+
 router.patch(
   "/:id/status",
   verifyToken,
@@ -164,7 +163,7 @@ router.patch(
       set.finalAmount = amount;
     }
 
-    // Filtering on the old status makes the transition atomic
+
     const result = await bookings.updateOne(
       { _id, status: booking.status },
       { $set: set, $push: { statusHistory: { status: next, changedAt: new Date() } } as any }
@@ -175,7 +174,7 @@ router.patch(
   })
 );
 
-/** POST /api/bookings/:id/review - customer rates a paid job (1-5). */
+
 router.post(
   "/:id/review",
   verifyToken,

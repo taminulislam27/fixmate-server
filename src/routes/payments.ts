@@ -7,11 +7,6 @@ const router = Router();
 
 const stripe = () => new Stripe(process.env.STRIPE_SECRET_KEY as string);
 
-/**
- * Saves the payment for a paid Checkout Session exactly once.
- * Used by both the success-page verification and the webhook; the unique index on
- * stripeSessionId plus the paymentStatus guard make a double save impossible.
- */
 export async function savePaidSession(session: Stripe.Checkout.Session) {
   if (session.payment_status !== "paid") return { saved: false as const, reason: "unpaid" };
   const bookingIdStr = session.metadata?.bookingId || "";
@@ -58,7 +53,7 @@ export async function savePaidSession(session: Stripe.Checkout.Session) {
   return { saved: true as const, payment: doc };
 }
 
-/** POST /api/payments/create-checkout-session - amount always comes from the DB. */
+
 router.post(
   "/create-checkout-session",
   verifyToken,
@@ -96,7 +91,7 @@ router.post(
   })
 );
 
-/** GET /api/payments/verify?session_id= - saves the payment after Stripe confirms it. */
+
 router.get(
   "/verify",
   verifyToken,
@@ -118,7 +113,7 @@ router.get(
   })
 );
 
-/** GET /api/payments/my - payment history for the logged-in customer. */
+
 router.get(
   "/my",
   verifyToken,
@@ -129,7 +124,7 @@ router.get(
   })
 );
 
-/** Stripe webhook router. Mounted in app.ts BEFORE express.json() because it needs the raw body. */
+
 export const webhookRouter = Router();
 webhookRouter.post(
   "/",
