@@ -1,8 +1,4 @@
-/**
- * Seed services + bookings for the demo accounts.
- * Run the CLIENT seed first (it creates the BetterAuth users: admin, 2 technicians, 1 customer),
- * then run `npm run seed` here.
- */
+
 import "dotenv/config";
 import { getDb, cols } from "./db";
 
@@ -69,7 +65,7 @@ async function main() {
       createdAt: new Date(now - (SERVICES.length - i) * day),
     };
   });
-  // one pending service so the admin approval queue is not empty
+
   docs.push({
     ...docs[0],
     title: "Tablet Screen Repair",
