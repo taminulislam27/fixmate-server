@@ -4,7 +4,7 @@ import { verifyToken, wrap } from "../middleware/auth";
 
 const router = Router();
 
-/** PATCH /api/users/profile - any logged-in user; email and role can never be changed here. */
+
 router.patch(
   "/profile",
   verifyToken,
