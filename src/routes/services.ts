@@ -17,7 +17,6 @@ const router = Router();
 
 const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-/** Average rating + count per service id, computed from reviewed bookings. */
 async function ratingMap(serviceIds: string[]) {
   const { bookings } = await cols();
   const rows = await bookings
@@ -61,7 +60,6 @@ function validateServiceBody(body: any) {
   };
 }
 
-/** GET /api/services - public. Search, filter, sort and (optional) pagination all run in MongoDB. */
 router.get(
   "/",
   wrap(async (req, res) => {
@@ -107,7 +105,7 @@ router.get(
   })
 );
 
-/** GET /api/services/my - technician's own services (declared before /:id). */
+
 router.get(
   "/my",
   verifyToken,
@@ -122,7 +120,7 @@ router.get(
   })
 );
 
-/** GET /api/services/:id - public, only approved + available services. */
+
 router.get(
   "/:id",
   wrap(async (req, res) => {
@@ -159,7 +157,7 @@ router.get(
   })
 );
 
-/** POST /api/services - technician creates a service (pending approval). */
+
 router.post(
   "/",
   verifyToken,
@@ -181,7 +179,7 @@ router.post(
   })
 );
 
-/** PATCH /api/services/:id - owner edits; goes back to pending. */
+
 router.patch(
   "/:id",
   verifyToken,
@@ -196,7 +194,7 @@ router.patch(
       return void res.status(403).json({ message: "Forbidden: you do not own this service" });
     }
 
-    // Availability-only toggle does not need re-approval
+
     if (Object.keys(req.body).length === 1 && typeof req.body.isAvailable === "boolean") {
       await services.updateOne({ _id }, { $set: { isAvailable: req.body.isAvailable } });
       return void res.json({ message: "Availability updated", isAvailable: req.body.isAvailable });
@@ -209,7 +207,7 @@ router.patch(
   })
 );
 
-/** DELETE /api/services/:id - owner deletes. */
+
 router.delete(
   "/:id",
   verifyToken,

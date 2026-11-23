@@ -34,7 +34,7 @@ const countBy = (rows: { status?: string }[]) => {
   return out;
 };
 
-/** GET /api/stats/overview - role-aware numbers + chart data for the dashboard overview pages. */
+
 
 router.get(
   "/overview",
@@ -94,7 +94,7 @@ router.get(
   })
 );
 
-/** GET /api/stats/public - landing page numbers (no auth). */
+
 router.get(
   "/public",
   wrap(async (_req, res) => {
