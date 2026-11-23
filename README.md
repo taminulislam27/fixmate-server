@@ -2,8 +2,8 @@
 
 REST API for **FixMate**, the smart device & home appliance repair booking platform. Handles services, bookings, Stripe payments and admin tools with JWT role-based middleware.
 
-- **Live API:** `[fixmate-live-api](https://fixmate-server-psi.vercel.app/)`
-- **Client repo:** `[fixmate-client](https://fixmate-client-pink.vercel.app/)`
+- **Live API:** [fixmate-live-api](https://fixmate-server-psi.vercel.app/)
+- **Client repo:** [fixmate-client](https://fixmate-client-pink.vercel.app/)
 
 ## Key features
 
