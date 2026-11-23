@@ -4,6 +4,27 @@ import { verifyToken, wrap } from "../middleware/auth";
 
 const router = Router();
 
+interface BookingDoc {
+  status?: string;
+  customerEmail?: string;
+  technicianEmail?: string;
+}
+
+interface ServiceDoc {
+  status?: string;
+  approvalStatus?: string;
+  category: string;
+  technicianEmail?: string;
+  isAvailable?: boolean;
+}
+
+interface PaymentDoc {
+  amount?: number;
+  paidAt: string | number | Date;
+  customerEmail?: string;
+  technicianEmail?: string;
+}
+
 const countBy = (rows: { status?: string }[]) => {
   const out: Record<string, number> = {};
   rows.forEach((r) => {
@@ -22,12 +43,12 @@ router.get(
     const { role, email } = req.user!;
 
     if (role === "customer") {
-      const mine = await bookings.find({ customerEmail: email }).toArray();
-      const paid = await payments.find({ customerEmail: email }).toArray();
+      const mine = await bookings.find<BookingDoc>({ customerEmail: email }).toArray();
+      const paid = await payments.find<PaymentDoc>({ customerEmail: email }).toArray();
       return void res.json({
         role,
         totalRequests: mine.length,
-        activeJobs: mine.filter((b) => ["requested", "accepted", "in-progress"].includes(b.status)).length,
+        activeJobs: mine.filter((b) => ["requested", "accepted", "in-progress"].includes(b.status ?? "")).length,
         completedJobs: mine.filter((b) => b.status === "completed").length,
         totalSpent: paid.reduce((s, p) => s + (p.amount || 0), 0),
         byStatus: countBy(mine),
@@ -35,9 +56,9 @@ router.get(
     }
 
     if (role === "technician") {
-      const myServices = await services.find({ technicianEmail: email }).toArray();
-      const jobs = await bookings.find({ technicianEmail: email }).toArray();
-      const earned = await payments.find({ technicianEmail: email }).toArray();
+      const myServices = await services.find<ServiceDoc>({ technicianEmail: email }).toArray();
+      const jobs = await bookings.find<BookingDoc>({ technicianEmail: email }).toArray();
+      const earned = await payments.find<PaymentDoc>({ technicianEmail: email }).toArray();
       return void res.json({
         role,
         totalServices: myServices.length,
@@ -49,9 +70,9 @@ router.get(
     }
 
     // admin
-    const allBookings = await bookings.find({}).toArray();
-    const allServices = await services.find({}).toArray();
-    const allPayments = await payments.find({}).toArray();
+    const allBookings = await bookings.find<BookingDoc>({}).toArray();
+    const allServices = await services.find<ServiceDoc>({}).toArray();
+    const allPayments = await payments.find<PaymentDoc>({}).toArray();
     const byCategory: Record<string, number> = {};
     allServices.forEach((s) => (byCategory[s.category] = (byCategory[s.category] || 0) + 1));
     const revenueByDay: Record<string, number> = {};
